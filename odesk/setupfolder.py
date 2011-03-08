@@ -3,6 +3,7 @@ import random
 import string
 import os
 import simplejson as json
+from userpw import ENV_USER, ENV_PASS
 
 
 def run_cmd(cmd):
@@ -10,7 +11,8 @@ def run_cmd(cmd):
 
 
 def wget_cmd(cmd):
-    return "wget --delete-after --user=ENV_USER --password=ENV_PW http://soc1024.com:2082/frontend/na4/%s" % cmd
+    return "wget --delete-after --user=%s --password=%s http://soc1024.com:2082"\
+           "/frontend/na4/%s" % ENV_USER, ENV_PASS, cmd
 
 
 def add_mysql_user(user, pw):

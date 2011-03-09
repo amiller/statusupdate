@@ -35,6 +35,21 @@ def add_ftp_user(user, pw, directory):
     run_cmd(wget_cmd(cmd))
 
 
+def del_db(dbname):
+    cmd = "sql/dodeldb.html?db=%s" % dbname
+    run_cmd(wget_cmd(cmd))
+
+    
+def del_ftp(user):
+    cmd = "ftp/dodelftp.html?login=%s" % user
+    run_cmd(wget_cmd(cmd))
+
+
+def del_dbuser(dbuser):
+    cmd = "sql/deluser.html?user=%s" % dbuser
+    run_cmd(wget_cmd(cmd))
+
+
 def random_str(num=8):
     chrs = string.lowercase + string.digits
     return ''.join([random.choice(chrs) for i in range(num)])
@@ -48,15 +63,19 @@ def add_folder(foldername=None):
     if foldername is None:
         foldername = user
 
-    fullname = '/home/soc1024c/statusupdate/www/odesk/%s' % foldername
-    
     # Save the json to the control directory
     d = dict(user='soc1024c_'+user,
              pw=pw,
              db='soc1024c_'+user,
              foldername=foldername)
-    with open('configs/%s.json' % foldername,'w') as f:
+
+    # Create the folder, store the config
+    fullname = '/home/soc1024c/statusupdate/www/odesk/%s' % foldername
+    os.mkdir(fullname)
+    with open('%s/config.json' % (fullname),'w') as f:
         json.dump(d, f)
+
+
     
     # Create the database and link the user
     add_mysql_user(user, pw)
@@ -65,8 +84,35 @@ def add_folder(foldername=None):
     link_mysql_user(user, user)
     add_ftp_user(user, pw, fullname)
 
-    # Create the folder, store the config
-    os.mkdir(fullname)
-    with open('%s/config.json' % (fullname),'w') as f:
-        json.dump(d, f)
 
+import argparse
+
+def go():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('name', nargs='?')
+    parser.add_argument('-new', action='store_true')
+    parser.add_argument('-rm', action='store_true')
+    args = parser.parse_args()
+    print args
+    if args.rm:
+        if not args.name:
+            parser.print_help()
+            return
+        fullname = '/home/soc1024c/statusupdate/www/odesk/%s' % args.name
+        with open('%s/config.json' % fullname,'r') as f:
+            config = json.load(f)
+        del_db(config['db'])
+        del_dbuser(config['user'])
+        del_ftp(config['user'])
+        print "Removing directory %s" % fullname
+        run_cmd("rm -r %s" % fullname)
+    elif args.new:
+        if not args.name:
+            add_folder()
+        else:
+            add_folder(args.name)
+    else:
+        parser.print_help()
+
+if __name__ == "__main__":
+    go()

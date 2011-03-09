@@ -49,7 +49,8 @@ def copy_templates():
 
 def clear_database():
     c = conn.cursor()
-    for table in ['words','interests','word_interests','people','people_interests']:
+    for table in ['words','interests','word_interests','people',
+                  'people_interests', 'status_templates']:
         try:
             c.execute("""DROP TABLE %s""" % table)
         except MySQLdb.OperationalError:
@@ -62,26 +63,27 @@ def create_database():
     `word` varchar(64) NOT NULL,
     `interest` varchar(255) NOT NULL,
     PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=23 ;""",
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""",
 
     """CREATE TABLE IF NOT EXISTS `words` (
+    `part` varchar(16) NOT NULL,
     `id` int(11) NOT NULL auto_increment,
     `word` varchar(64) NOT NULL,
-    `part` varchar(16) NOT NULL,
-    PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=57129 ;""",
+    PRIMARY KEY  (`part`,`id`),
+    KEY  (`word`)
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""",
 
     """CREATE TABLE IF NOT EXISTS `interests` (
     `id` int(11) NOT NULL auto_increment,
     `interest` varchar(255) NOT NULL,
     PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=48 ;""",
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""",
 
     """CREATE TABLE IF NOT EXISTS `status_templates` (
     `id` int(11) NOT NULL auto_increment,
     `template` text NOT NULL,
     PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=24 ;""",
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""",
 
     """CREATE TABLE IF NOT EXISTS `people` (
     `id` bigint(20) NOT NULL,
@@ -97,7 +99,7 @@ def create_database():
     `person_id` bigint(20) NOT NULL,
     `interest` varchar(255) NOT NULL,
     PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;"""]
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;"""]
 
     
     c = conn.cursor()              

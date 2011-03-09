@@ -1,22 +1,7 @@
-#!/usr/bin/env python
+#!/home/soc1024c/bin/python
 
 import os, platform, re, sys
 from cgi import escape
-
-import sys
- 
-# a simple class with a write method
-class WritableObject:
-    def __init__(self):
-        self.content = []
-    def write(self, string):
-        self.content.append(string)
-    def fullText(self): 
-        return ''.join(self.content)
- 
-# example with redirection of sys.stdout
-foo = WritableObject()                   # a writable object
-sys.stdout = foo                         # redirection
 
 # Import optional modules (generally as ordered in the Python Library Reference, if it exists)
 optional_modules_list = [
@@ -26,7 +11,7 @@ optional_modules_list = [
 'socket',
 'audioop', 'curses', 'imageop', 'aifc', 'sunau', 'wave', 'chunk', 'colorsys', 'rgbimg', 'imghdr', 'sndhdr', 'ossaudiodev', 'sunaudiodev', # multimedia (internal)
 'kdecore', 'OpenGL', 'pygame', 'pyglet', 'pygtk', 'qt', 'PyQt4', 'Tkinter', 'visual', 'wx', # gui toolkits (external)
-'adodbapi', 'cx_Oracle', 'ibm_db', 'mxODBC', 'MySQLdb', 'pgdb', 'PyDO', 'sapdbapi', 'sqlite3','sqlite', 'pysqlite', # databases
+'adodbapi', 'cx_Oracle', 'ibm_db', 'mxODBC', 'MySQLdb', 'pgdb', 'PyDO', 'sapdbapi', # databases
 'cherrypy', 'Crypto', 'django', 'IPython', 'java', 'mod_python', 'mx.DateTime', 'numpy', 'pylons', 'twisted', 'turbogears', 'zope'] # misc external modules
 
 for i in optional_modules_list:
@@ -231,9 +216,6 @@ table += "Oracle (cx_Oracle)", imported('cx_Oracle')
 table += "PostgreSQL (PyGreSQL)", imported('pgdb')
 table += "Python Data Objects (PyDO)", imported('PyDO')
 table += "SAP DB (sapdbapi)", imported('sapdbapi')
-table += "Sqlite3", imported('sqlite3')
-table += "Sqlite", imported('sqlite')
-table += "pySqlite", imported('pysqlite')
 
 print_tc_table("Database Support", table)
 
@@ -384,5 +366,3 @@ print """
 print """
   </body>
 </html>""";
-
-sys.stdout = sys.__stdout__

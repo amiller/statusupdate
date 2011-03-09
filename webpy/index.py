@@ -3,13 +3,12 @@
 
 import web
 
-urls = ("/.*", "hello")
+urls = ("/status", "status")
 app = web.application(urls, globals())
 
-class hello:
+class status:
     def GET(self):
         import make_status
-        #web.header('Content-Type', 'text/plain')
         return make_status.random_template()
 
 if __name__ == "__main__":

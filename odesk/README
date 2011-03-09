@@ -1,4 +1,0 @@
-Don't forget to create a 'userpw.py' folder that assigns the following variables:
-
-ENV_USER=<user>
-ENV_PASS=<pass>

@@ -11,7 +11,8 @@ def run_cmd(cmd):
 
 
 def wget_cmd(cmd):
-    return "wget --delete-after --user=%s --password=%s http://soc1024.com:2082"\
+    print cmd
+    return "wget -q --delete-after --user=%s --password=%s http://soc1024.com:2082"\
            "/frontend/na4/%s" % (ENV_USER, ENV_PASS, cmd)
 
 

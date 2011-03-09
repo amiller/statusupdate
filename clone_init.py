@@ -36,7 +36,7 @@ def folder_init():
 def copy_templates():
     # Copy all the template files, especially phpmyadmin
     subprocess.call('cp -r ~/statusupdate/template/* .', shell=True)
-    subprocess.call('ln -s ~/statusupdate/www/webpy .', shell=True)
+    subprocess.call('ln -s ~/statusupdate/webpy .', shell=True)
 
     # Replace the server information in the template
     with open('phpmyadmin/config.inc.php','r') as f:

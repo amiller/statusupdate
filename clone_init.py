@@ -4,13 +4,7 @@ from nltk.corpus import brown
 import nltk
 from itertools import islice
 import subprocess
-
-
-# Read the config properties from the json in the current directory
-with open('config.json','r') as f:
-    config = json.load(f)
-
-conn = MySQLdb.connect(user=config['user'],passwd=config['pw'],db=config['db'])
+import os
 
 
 def add_words():
@@ -35,11 +29,9 @@ def add_words():
             c.execute(str)
 
 def folder_init():
-    #clear_database()
+    clear_database()
     create_database()
-    #add_words()
     copy_templates()
-
 
 def copy_templates():
     # Copy all the template files, especially phpmyadmin
@@ -112,3 +104,32 @@ def create_database():
     for table in tables:
         print table[:64].split('\n')[0]
         c.execute(table)
+
+
+import argparse
+def go():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-init', action='store_true')
+    parser.add_argument('-addwords', action='store_true')
+    parser.add_argument('name', default='master', nargs='?')
+    args = parser.parse_args()
+    if not (args.init or args.addwords):
+        parser.print_help()
+
+    os.chdir('www/odesk/%s' % args.name)
+        
+    # Read the config properties from the json in the current directory
+    global config, conn
+    with open('config.json','r') as f:
+        config = json.load(f)
+
+    conn = MySQLdb.connect(user=config['user'],passwd=config['pw'],db=config['db'])
+
+    if args.init:
+        folder_init()
+    elif args.addwords:
+        add_words()
+
+
+if __name__ == "__main__":
+    go()

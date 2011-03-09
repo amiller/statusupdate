@@ -1,7 +1,23 @@
-Don't forget to create a 'userpw.py' folder that assigns the following variables:
-
-ENV_USER=<user>
-ENV_PASS=<pass>
 
 
-Template contains scripts that will be copied to each deploy directory
+clone_create.py:
+	Used for creating and deleting 'clone' folders. Default is random.
+	This scripts reads a 'userpw.py' that assigns the following:
+
+	ENV_USER=<user>
+	ENV_PASS=<pass>
+
+
+clone_init.py:
+	Initialize or clear the clone databases. Default is master.
+
+
+
+
+webpy/
+	python scripts that will be symlinked into each folder and ran as fastcgi.
+	Expects to use ../config.json in the clone folder for DB params
+
+
+template/
+	scripts and other files that will be copied to each clone folder during create

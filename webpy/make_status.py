@@ -10,6 +10,7 @@ pos_trans = dict(
     NAME='NP',
     NOUNS='NNS',
     NOUN='NN',
+    LOCATION='NN',
 )
 
 def random_word(part='NN'):
@@ -46,7 +47,7 @@ I just VERBED in my NOUN.
 
     db.conn.cursor()    
     for k,v in sorted(pos_trans.items(),key=lambda x:x[1])[::-1]:
-        while t.rfind(k) > 0:
+        while t.rfind(k) >= 0:
             word = random_word(v)
             t = t.replace(k, word, 1)
     return t

@@ -76,6 +76,9 @@ def add_folder(foldername=None):
     with open('%s/config.json' % (fullname),'w') as f:
         json.dump(d, f)
 
+    # Copy the config to a separate dir. We need this one for removing the
+    # databases with full user privs
+    run_cmd('cp %s/config.json configs/%s.json' % (fullname, foldername))
 
     
     # Create the database and link the user
@@ -100,7 +103,7 @@ def go():
             parser.print_help()
             return
         fullname = '/home/soc1024c/statusupdate/www/odesk/%s' % args.name
-        with open('%s/config.json' % fullname,'r') as f:
+        with open('configs/%s.json' % args.name,'r') as f:
             config = json.load(f)
         del_db(config['db'])
         del_dbuser(config['user'])

@@ -1,6 +1,7 @@
 
 
 clone_create.py:
+	Run without arguments for usage string
 	Used for creating and deleting 'clone' folders. Default is random.
 	This scripts reads a 'userpw.py' that assigns the following:
 

@@ -13,6 +13,10 @@ clone_init.py:
 	Initialize or clear the clone databases. Default is master.
 
 
+data/
+	The master copy of the 'source files' like faces and people and interests. 
+	Includes scripts to generate these.
+
 
 
 webpy/

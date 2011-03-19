@@ -1,0 +1,8 @@
+Here's how we store the people.
+
+- First, I manually download some docs from google docs containing lists of names_raw.txt.
+- Then I use cleanup.sh to distill the names into a single text file names.txt.
+- get_images.py is used to download URLs and store them in 'faces', which is symlinked into www
+- We need to generate interests for each name, generate_interests.py, which makes names_interests.txt
+- The script in the previous directory, clone_init.py can build the people and people_interests database
+from names_interests.txt.

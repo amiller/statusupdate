@@ -5,6 +5,7 @@ import nltk
 from itertools import islice
 import subprocess
 import os
+import simplejson
 
 
 def add_words():
@@ -28,10 +29,43 @@ def add_words():
                         for word in words])
             c.execute(str)
 
+
+def add_people():
+    global names_interests
+    with open('/home/soc1024c/statusupdate/data/names_interests.txt','r') as f:
+        names_interests = json.load(f)
+    c = conn.cursor()
+
+    for n in names_interests:
+        name = n['name'].replace(' ','+')
+        url = 'http://soc1024.com/statusupdate/faces/%s.png' % name
+        c.execute("INSERT INTO people (name, pic_url) \
+                   VALUES ('%s','%s')" % (name, url))
+        c.execute("INSERT INTO people_interests (name, interest) \
+                   VALUES %s" % \
+                  ','.join(["('%s', '%s')" % (name,_[0]) for _ in n['interests']])) 
+    
+
+def add_interests():
+    with open('/home/soc1024c/statusupdate/data/interests.txt','r') as f:
+        interests = [[_.strip() for _ in i.split('|')]
+                      for i in f.readlines()]
+    c = conn.cursor()
+    for i in interests:
+        cmd = ("INSERT INTO interests (interest, desc) \
+                   VALUES ('%s','%s')" % (i[0], i[1]))
+        print cmd
+        c.execute(cmd)
+
+
+
 def folder_init():
     clear_database()
     create_database()
     copy_templates()
+    add_people()
+    add_interests()
+    
 
 def copy_templates():
     # Copy all the template files, especially phpmyadmin
@@ -59,10 +93,9 @@ def clear_database():
     
 def create_database():
     tables = ["""CREATE TABLE IF NOT EXISTS `word_interests` (
-    `id` int(11) NOT NULL auto_increment,
     `word` varchar(64) NOT NULL,
-    `interest` varchar(255) NOT NULL,
-    PRIMARY KEY  (`id`)
+    `interest` varchar(128) NOT NULL,
+    PRIMARY KEY  (`word`,`interest`)
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""",
 
     """CREATE TABLE IF NOT EXISTS `words` (
@@ -74,9 +107,9 @@ def create_database():
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""",
 
     """CREATE TABLE IF NOT EXISTS `interests` (
-    `id` int(11) NOT NULL auto_increment,
-    `interest` varchar(255) NOT NULL,
-    PRIMARY KEY  (`id`)
+    `interest` varchar(128) NOT NULL,
+    `desc` varchar(128) NOT NULL,
+    PRIMARY KEY  (`interest`)
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""",
 
     """CREATE TABLE IF NOT EXISTS `status_templates` (
@@ -86,19 +119,17 @@ def create_database():
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""",
 
     """CREATE TABLE IF NOT EXISTS `people` (
-    `id` bigint(20) NOT NULL,
-    `firstname` varchar(64) NOT NULL,
-    `lastname` varchar(64) NOT NULL,
+    `name` varchar(64) NOT NULL,
     `pic_url` varchar(255) NOT NULL,
     `profile` text NOT NULL,
-    PRIMARY KEY  (`id`)
+    PRIMARY KEY  (`name`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8;""",
 
     """CREATE TABLE IF NOT EXISTS `people_interests` (
-    `id` int(11) NOT NULL auto_increment,
-    `person_id` bigint(20) NOT NULL,
-    `interest` varchar(255) NOT NULL,
-    PRIMARY KEY  (`id`)
+    `name` varchar(64) NOT NULL,
+    `interest` varchar(128) NOT NULL,
+    PRIMARY KEY  (`name`,`interest`),
+    KEY (`interest`)
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;"""]
 
     

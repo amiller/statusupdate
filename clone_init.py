@@ -52,9 +52,8 @@ def add_interests():
                       for i in f.readlines()]
     c = conn.cursor()
     for i in interests:
-        cmd = ("INSERT INTO interests (interest, desc) \
-                   VALUES ('%s','%s')" % (i[0], i[1]))
-        print cmd
+        cmd = ("INSERT INTO interests (`interest`, `desc`) \
+                   VALUES ('%s','%s');" % (i[0], i[1]))
         c.execute(cmd)
 
 

@@ -3,7 +3,7 @@
 
 import web
 
-urls = ("/status", "status")
+urls = ("/", "status")
 app = web.application(urls, globals())
 
 class status:

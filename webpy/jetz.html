@@ -36,38 +36,16 @@
             <input name="" type="text" />
             <div class="sbmt-button"><a href="#"><strong>Update <span>(50)</span></strong></a></div>
         </div><!--statusbox-->
+{% for status,person in statuses %}
 <div class="updatebox">
-        	<div class="thumb-img"><a href="#"><img src="images/template_45.png" /></a></div>
+        	<div class="thumb-img"><a href="#"><img src="{{ person.1 }}"/></a></div>
             <div class="update-content">
-            	<h1>James Blunt</h1>
-                <p>I'm glad I'm not that banana I just ate. Because if I was, I would have just been eaten</p>
+            	<h1>{{ person.0 }}</h1>
+                <p>{{ status }}</p>
                 <span><div class="timedate">March 10 at 5:48pm</div> • <strong><a href="#">Reply <span>(5)</span></a></strong></span>
             </div><!--update-content-->
         </div><!--updatebox-->
-<div class="updatebox">
-        	<div class="thumb-img"><a href="#"><img src="images/template_45.png" /></a></div>
-            <div class="update-content">
-            	<h1>James Blunt</h1>
-                <p>I'm glad I'm not that banana I just ate. Because if I was, I would have just been eaten</p>
-                <span><div class="timedate">March 10 at 5:48pm</div> • <strong><a href="#">Reply <span>(5)</span></a></strong></span>
-            </div><!--update-content-->
-        </div><!--updatebox-->
-<div class="updatebox">
-        	<div class="thumb-img"><a href="#"><img src="images/template_45.png" /></a></div>
-            <div class="update-content">
-            	<h1>James Blunt</h1>
-                <p>Last night I dreamt the aliens were finally coming for me. But when we got to Mars, I hadn't packed any clean underwear!</p>
-                <span><div class="timedate">March 10 at 5:48pm</div> • <strong><a href="#">Reply <span>(5)</span></a></strong></span>
-            </div><!--update-content-->
-        </div><!--updatebox-->
-<div class="updatebox">
-        	<div class="thumb-img"><a href="#"><img src="images/template_45.png" /></a></div>
-            <div class="update-content">
-            	<h1>James Blunt</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                <span><div class="timedate">March 10 at 5:48pm</div> • <strong><a href="#">Reply <span>(5)</span></a></strong></span>
-            </div><!--update-content-->
-        </div><!--updatebox-->
+{% endfor %}
     </div><!--content-details-->
 </div><!--contentwrap-->
 </body>

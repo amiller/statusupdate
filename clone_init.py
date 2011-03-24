@@ -10,7 +10,7 @@ import simplejson
 
 def add_words():
     def get_words(corp=brown, pos='NN'):
-        return (word for word,_pos in corp.tagged_words() if _pos==pos)
+        return set([word for word,_pos in corp.tagged_words() if _pos==pos])
 
     def consume(iterator, n):
         next(islice(iterator, n, n), None)
@@ -20,7 +20,7 @@ def add_words():
     c = conn.cursor()
     for pos in parts:
         print pos
-        iterator = get_words(pos=pos)
+        iterator = iter(get_words(pos=pos))
         while True:
             words = [_ for _ in islice(iterator, 0, 20)]
             if len(words) == 0: break
@@ -92,23 +92,25 @@ def clear_database():
     
 def create_database():
     tables = ["""CREATE TABLE IF NOT EXISTS `word_interests` (
-    `word` varchar(64) NOT NULL,
+    `word` varchar(64) BINARY NOT NULL,
     `interest` varchar(128) NOT NULL,
     PRIMARY KEY  (`word`,`interest`)
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""",
 
     """CREATE TABLE IF NOT EXISTS `words` (
-    `part` varchar(16) NOT NULL,
     `id` int(11) NOT NULL auto_increment,
-    `word` varchar(64) NOT NULL,
-    PRIMARY KEY  (`part`,`id`),
-    KEY  (`word`)
+    `part` varchar(16) NOT NULL,
+    `word` varchar(64) BINARY NOT NULL,
+    PRIMARY KEY (`part`,`id`),
+    KEY (`word`)
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""",
 
     """CREATE TABLE IF NOT EXISTS `interests` (
+    `id` int(11) NOT NULL auto_increment,
     `interest` varchar(128) NOT NULL,
     `desc` varchar(128) NOT NULL,
-    PRIMARY KEY  (`interest`)
+    PRIMARY KEY  (`interest`),
+    KEY (`id`)
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""",
 
     """CREATE TABLE IF NOT EXISTS `status_templates` (
@@ -118,10 +120,12 @@ def create_database():
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""",
 
     """CREATE TABLE IF NOT EXISTS `people` (
+    `id` int(11) NOT NULL auto_increment,
     `name` varchar(64) NOT NULL,
     `pic_url` varchar(255) NOT NULL,
     `profile` text NOT NULL,
-    PRIMARY KEY  (`name`)
+    PRIMARY KEY  (`name`),
+    KEY (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8;""",
 
     """CREATE TABLE IF NOT EXISTS `people_interests` (

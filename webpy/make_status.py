@@ -11,18 +11,16 @@ pos_trans = dict(
     NOUNS='NNS',
     NOUN='NN',
     LOCATION='NN',
+    PLACE='NN',
+    VERB='VB'
 )
 
 def random_word(part='NN'):
     c = db.conn.cursor()
-    cmd = """
-        SELECT word FROM words T
-        JOIN (SELECT MAX(id) AS mid FROM words
-              WHERE part='{part}') AS TT
-        ON T.id >= CEIL(RAND()*TT.mid)
-        AND part = '{part}'
-        LIMIT 1;""".format(part=part)
-    c.execute(cmd)
+    c.execute("SELECT id FROM words WHERE part='%s' ORDER BY id DESC LIMIT 1" % part)
+    mid, = c.fetchone()
+    c.execute("SELECT word FROM words WHERE part='%s' and id >= %d LIMIT 1" % \
+              (part, random.randint(1, mid)))
     word, = c.fetchone()
     return word
 
@@ -45,13 +43,24 @@ I just VERBED in my NOUN.
 
     t = random.choice(templates)
 
-    db.conn.cursor()    
     for k,v in sorted(pos_trans.items(),key=lambda x:x[1])[::-1]:
         while t.rfind(k) >= 0:
             word = random_word(v)
             t = t.replace(k, word, 1)
     return t
 
+def random_person():
+    c = db.conn.cursor()
+    c.execute("SELECT id FROM people ORDER BY id DESC LIMIT 1")
+    mid, = c.fetchone()
+    c.execute("SELECT name,pic_url FROM people WHERE id > %d LIMIT 1" % \
+              (random.randint(1,mid),))
+    person = c.fetchone()
+    return person
+
+def random_update():
+    t = random_template()
 
 if __name__ == "__main__":
     print random_template()
+    print random_person()

@@ -22,8 +22,8 @@ def connect():
     conn = MySQLdb.connect(db=config['db'],
                            user=config['user'],
                            passwd=config['pw'])
-if not 'conn' in globals():
-    connect()
+
+connect()
 
 def random_template():
     c = conn.cursor()

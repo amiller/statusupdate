@@ -13,10 +13,22 @@ app = web.application(urls, globals())
 
 class render:
     def GET(self):
-        import make_status
+        # Check for the key in the query
+        key = None
+        if not key:
+            # generate a fresh key and redirect
+            pass
+
+        # Look up our state from the database
+        state = None
+
+        from webpy import make_status
         statuses = [(make_status.random_template(),
                      make_status.random_person())
                     for _ in range(6)]
+
+        
+
         web.header('content-type', 'text/html')
         return unicode(render_to_string('jetz.html', locals()))
 

@@ -8,7 +8,45 @@ import os
 import simplejson
 
 
-def add_words():
+def add_table(table, command):
+    c = conn.cursor()
+    try:
+        c.execute("""DROP TABLE %s""" % table)
+    except MySQLdb.OperationalError:
+        pass
+        # print "Couldn't delete, tables %s probably doesn't exist" % table
+    c = conn.cursor()
+    print command[:64].split('\n')[0]
+    c.execute(command)
+
+
+def init_templates():
+    add_table('status_templates',
+              """CREATE TABLE IF NOT EXISTS `status_templates` (
+              `id` int(11) NOT NULL auto_increment,
+              `template` text NOT NULL,
+              PRIMARY KEY  (`id`)
+              ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""")
+
+
+
+def init_words():
+    add_table('words',
+              """CREATE TABLE IF NOT EXISTS `words` (
+              `id` int(11) NOT NULL auto_increment,
+              `part` varchar(16) NOT NULL,
+              `word` varchar(64) BINARY NOT NULL,
+              PRIMARY KEY (`part`,`id`),
+              KEY (`word`)
+              ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""")
+
+    add_table('word_interests',
+              """CREATE TABLE IF NOT EXISTS `word_interests` (
+              `word` varchar(64) BINARY NOT NULL,
+              `interest` varchar(128) NOT NULL,
+              PRIMARY KEY  (`word`,`interest`)
+              ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""")
+
     def get_words(corp=brown, pos='NN'):
         return set([word for word,_pos in corp.tagged_words() if _pos==pos])
 
@@ -30,7 +68,26 @@ def add_words():
             c.execute(str)
 
 
-def add_people():
+def init_people():
+    add_table('people',
+              """CREATE TABLE IF NOT EXISTS `people` (
+              `id` int(11) NOT NULL auto_increment,
+              `name` varchar(64) NOT NULL,
+              `pic_url` varchar(255) NOT NULL,
+              `profile` text NOT NULL,
+              PRIMARY KEY  (`name`),
+              KEY (`id`)
+              ) ENGINE=MyISAM DEFAULT CHARSET=utf8;""")
+
+    add_table('people_interests',
+              """CREATE TABLE IF NOT EXISTS `people_interests` (
+              `name` varchar(64) NOT NULL,
+              `interest` varchar(128) NOT NULL,
+              PRIMARY KEY  (`name`,`interest`),
+              KEY (`interest`)
+              ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""")
+
+
     global names_interests
     with open('/home/soc1024c/statusupdate/data/names_interests.txt','r') as f:
         names_interests = json.load(f)
@@ -46,7 +103,16 @@ def add_people():
                   ','.join(["('%s', '%s')" % (name,_[0]) for _ in n['interests']])) 
     
 
-def add_interests():
+def init_interests():
+    add_table('interests',
+              """CREATE TABLE IF NOT EXISTS `interests` (
+              `id` int(11) NOT NULL auto_increment,
+              `interest` varchar(128) NOT NULL,
+              `desc` varchar(128) NOT NULL,
+              PRIMARY KEY  (`interest`),
+              KEY (`id`)
+              ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""")
+
     with open('/home/soc1024c/statusupdate/data/interests.txt','r') as f:
         interests = [[_.strip() for _ in i.split('|')]
                       for i in f.readlines()]
@@ -60,10 +126,9 @@ def add_interests():
 
 def folder_init():
     clear_database()
-    create_database()
     copy_templates()
-    add_people()
-    add_interests()
+    init_people()
+    init_interests()
     
 
 def copy_templates():
@@ -88,59 +153,7 @@ def clear_database():
             c.execute("""DROP TABLE %s""" % table)
         except MySQLdb.OperationalError:
             print "Couldn't delete, tables %s probably doesn't exist" % table
-    
-    
-def create_database():
-    tables = ["""CREATE TABLE IF NOT EXISTS `word_interests` (
-    `word` varchar(64) BINARY NOT NULL,
-    `interest` varchar(128) NOT NULL,
-    PRIMARY KEY  (`word`,`interest`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""",
-
-    """CREATE TABLE IF NOT EXISTS `words` (
-    `id` int(11) NOT NULL auto_increment,
-    `part` varchar(16) NOT NULL,
-    `word` varchar(64) BINARY NOT NULL,
-    PRIMARY KEY (`part`,`id`),
-    KEY (`word`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;""",
-
-    """CREATE TABLE IF NOT EXISTS `interests` (
-    `id` int(11) NOT NULL auto_increment,
-    `interest` varchar(128) NOT NULL,
-    `desc` varchar(128) NOT NULL,
-    PRIMARY KEY  (`interest`),
-    KEY (`id`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""",
-
-    """CREATE TABLE IF NOT EXISTS `status_templates` (
-    `id` int(11) NOT NULL auto_increment,
-    `template` text NOT NULL,
-    PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;""",
-
-    """CREATE TABLE IF NOT EXISTS `people` (
-    `id` int(11) NOT NULL auto_increment,
-    `name` varchar(64) NOT NULL,
-    `pic_url` varchar(255) NOT NULL,
-    `profile` text NOT NULL,
-    PRIMARY KEY  (`name`),
-    KEY (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;""",
-
-    """CREATE TABLE IF NOT EXISTS `people_interests` (
-    `name` varchar(64) NOT NULL,
-    `interest` varchar(128) NOT NULL,
-    PRIMARY KEY  (`name`,`interest`),
-    KEY (`interest`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=0 ;"""]
-
-    
-    c = conn.cursor()              
-    for table in tables:
-        print table[:64].split('\n')[0]
-        c.execute(table)
-
+            
 
 import argparse
 def go():
@@ -164,7 +177,7 @@ def go():
     if args.init:
         folder_init()
     elif args.addwords:
-        add_words()
+        init_words()
 
 
 if __name__ == "__main__":

@@ -1,11 +1,10 @@
-import simplejson as json
+import json
 import MySQLdb
 from nltk.corpus import brown
 import nltk
 from itertools import islice
 import subprocess
 import os
-import simplejson
 
 
 def add_table(table, command):

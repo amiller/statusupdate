@@ -1,4 +1,4 @@
-#!/home/soc1024c/bin/python
+#!/home/soc1024c/sandboxes/statusupdate/bin/python
 # -*- coding: utf-8 -*-
 
 import web

@@ -16,7 +16,7 @@ pos_trans = dict(
 )
 
 def random_word(part='NN'):
-    c = db.conn.cursor()
+    c = db.cursor()
     c.execute("SELECT id FROM words WHERE part='%s' ORDER BY id DESC LIMIT 1" % part)
     mid, = c.fetchone()
     c.execute("SELECT word FROM words WHERE part='%s' and id >= %d LIMIT 1" % \
@@ -50,7 +50,7 @@ I just VERBED in my NOUN.
     return t
 
 def random_person():
-    c = db.conn.cursor()
+    c = db.cursor()
     c.execute("SELECT id FROM people ORDER BY id DESC LIMIT 1")
     mid, = c.fetchone()
     c.execute("SELECT name,pic_url FROM people WHERE id > %d LIMIT 1" % \

@@ -13,19 +13,32 @@ else:
     assert path.startswith(prefix)
     configname = path.split('/')[len(prefix.split('/'))]
 
+
 with open('/home/soc1024c/public_html/statusupdate/odesk/%s/config.json' % \
           configname,'r') as f:
     config = json.load(f)
+
 
 def connect():
     global conn
     conn = MySQLdb.connect(db=config['db'],
                            user=config['user'],
                            passwd=config['pw'])
-
+    return conn
 connect()
 
+
+def cursor():
+    global conn
+    try:
+        conn.ping()
+        return conn.cursor()
+    except MySQLdb.OperationalError:
+        return connect().cursor()
+
+
 def random_template():
+    conn = connect()
     c = conn.cursor()
     c.execute("""
         SELECT template FROM status_templates

@@ -18,11 +18,5 @@ data/
 	Includes scripts to generate these.
 
 
-
-webpy/
-	python scripts that will be symlinked into each folder and ran as fastcgi.
+server/
 	Expects to use ../config.json in the clone folder for DB params
-
-
-template/
-	scripts and other files that will be copied to each clone folder during create
